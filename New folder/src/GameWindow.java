@@ -10,18 +10,26 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameWindow extends Frame implements Runnable,MouseListener,MouseMotionListener {
+    //xoa bo dem
+    Graphics seconds;
+    Image image;
 
     BufferedImage background;
-    BufferedImage planeImage1;
-    BufferedImage planeImage;
-    int planeX = 200;
-    int planeY = 300;
-    int plane1X=100;
-    int plane1Y=150;
-
-    int direction = 0;
+    BufferedImage bullet;
+    Plane plane;// khai bao tham chieu. chua co doi tuong.
+    Plane plane1;
 
     public GameWindow() {
+        //an con tro chuot
+        this.hiddenmouse();
+        plane= new Plane();
+        plane1=new Plane();
+        plane.positionX=150;
+        plane.positionY=300;
+        plane1.positionX=100;
+        plane1.positionY=200;
+        plane.speed=3;
+        //Plane plane1=plane;// 1nguoi co 2 ten,
         //thiet lap tieu de cho cua so
         this.setTitle("TechKids - code the change");
         //thiet lap kich thuoc cho cua so
@@ -39,11 +47,15 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
         //load Image tu thu muc Resource
         try {
             background = ImageIO.read(new File("Resources/Background.png"));
-            planeImage = ImageIO.read(new File("Resources/PLANE1.png"));
-            planeImage1 =ImageIO.read(new File("Resources/PLANE2.png"));
+            plane.sprite = ImageIO.read(new File("Resources/PLANE1.png"));
+            plane1.sprite=ImageIO.read(new File("Resources/PLANE2.png"));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+        this.addMouseMotionListener(this);
         this.addMouseListener(this);
         //doan code de bat su kien bam phim
         this.addKeyListener(new KeyListener() {
@@ -56,55 +68,65 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_A) {
-                    direction = 3;
+                    plane.direction = 3;
                 } else if(e.getKeyCode() == KeyEvent.VK_D) {
-                    direction = 4;
+                    plane.direction = 4;
                 } else if(e.getKeyCode() == KeyEvent.VK_W) {
-                    direction = 1;
+                    plane.direction = 1;
                 } else if(e.getKeyCode() == KeyEvent.VK_S) {
-                    direction = 2;
+                    plane.direction = 2;
                 }
             }
             //khi nhac phim len
             @Override
             public void keyReleased(KeyEvent e) {
-                direction = 0;
             }
         });
     }
     //ham ve
     //ve~ moi. thu o day
+    public void update(Graphics g){
+        if(image==null){
+            image= createImage(this.getWidth(),this.getHeight());
+             seconds=image.getGraphics();
+
+        }
+        seconds.setColor(getBackground());
+        seconds.fillRect(0,0,getWidth(),getHeight());
+        seconds.setColor(getForeground());
+        paint(seconds);
+        g.drawImage(image,0,0,null);
+
+
+    }
     @Override
     public void paint(Graphics g) {
 
         super.paint(g);
 
-        g.drawImage(background, 0, 0, null);
-
-        g.drawImage(planeImage, planeX, planeY, null);
-        g.drawImage(planeImage1,plane1X,plane1Y,null);
+        g.drawImage(background,0,0,null);
+        plane.draw(g);
+        plane1.draw(g);
 
         //g.drawLine(0,0, 100, 100);
+    }
+    // phuong thuc an mouse
+    private void hiddenmouse() {
+        Toolkit g = Toolkit.getDefaultToolkit();
+        Point h = new Point(0,0);
+        BufferedImage hidden = new BufferedImage(1, 1, BufferedImage.TRANSLUCENT);
+        Cursor invisibleCursor = g.createCustomCursor(hidden, h, "InvisibleCursor");
+        setCursor(invisibleCursor);
     }
     //Game Loop
     //Vong Lap game
     @Override
     public void run() {
         int count = 0;
-        while(true) {
+        while (true) {
+            plane.move();
+            ;
 
-            if(direction == 1) {
-                planeY-=3;
-            }
-            if(direction == 2){
-                planeY+=3;
-            }
-            if(direction == 3){
-                planeX-=3;
-            }
-            if(direction == 4){
-                planeX+=3;
-            }
 
             repaint();
             System.out.println(count++);
@@ -117,10 +139,10 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
         }
     }
 
+
     @Override
     public void mouseClicked(MouseEvent e) {
-        plane1X = e.getX();
-        plane1Y = e.getY();
+
 
     }
 
@@ -147,12 +169,16 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
     @Override
     public void mouseDragged(MouseEvent e) {
 
+
+
     }
+
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        plane1X = e.getX();
-        plane1Y = e.getY();
+        plane1.positionX = e.getX();
+        plane1.positionY = e.getY();
+
 
     }
 }
