@@ -80,6 +80,8 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
             //khi nhac phim len
             @Override
             public void keyReleased(KeyEvent e) {
+                //khi thả phím lên thì để direction = 0 cho nó không bay nữa
+                plane.direction = 0;
             }
         });
     }
@@ -125,9 +127,6 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
         int count = 0;
         while (true) {
             plane.move();
-            ;
-
-
             repaint();
             System.out.println(count++);
 

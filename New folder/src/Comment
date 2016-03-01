@@ -1,0 +1,5 @@
+-2
+    1. tên class chữ đầu tiên phải viết hoa(bullet)
+    2. khi thả phím lên thì gán direction = 0 cho nó khỏi bay nữa
+    3. chưa thêm bộ hàm get,set cho các thuộc tính
+    4. Không nên kế thừa Bullet với Plane, ít nữa chương trình to cno sẽ rất khác nhau.

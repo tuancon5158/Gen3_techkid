@@ -6,7 +6,4 @@ public class bullet extends Plane{
     public void move(){
         this.positionY=-speed;
     }
-
-
-
 }
