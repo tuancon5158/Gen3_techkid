@@ -1,6 +1,3 @@
-/**
- * Created by ASUS on 2/27/2016.
- */
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -8,30 +5,24 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
-public class GameWindow extends Frame implements Runnable,MouseListener,MouseMotionListener {
-    //xoa bo dem
+/**
+ * Created by Tuan on 2/26/16.
+ */
+public class GameWindow extends Frame implements Runnable {
     Graphics seconds;
     Image image;
-
     BufferedImage background;
-    BufferedImage bullet;
-    Plane plane;// khai bao tham chieu. chua co doi tuong.
-    Plane plane1;
+    Plane planeMoveByKey,planeMoveByMouse;
+    //PlaneEnemy planeEnemy;
+    Vector<PlaneEnemy> vectorPlaneEnemy = new Vector<PlaneEnemy>();
+    int direction = 0;
 
     public GameWindow() {
-        //an con tro chuot
-        this.hiddenmouse();
-        plane= new Plane();
-        plane1=new Plane();
-        plane.positionX=150;
-        plane.positionY=300;
-        plane1.positionX=100;
-        plane1.positionY=200;
-        plane.speed=3;
-        //Plane plane1=plane;// 1nguoi co 2 ten,
+
         //thiet lap tieu de cho cua so
-        this.setTitle("TechKids - code the change");
+        this.setTitle("TechKids - Tuấn Con");
         //thiet lap kich thuoc cho cua so
         this.setSize(400, 640);
         //thiet lap xem cua so co hien thi hay khong
@@ -47,17 +38,55 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
         //load Image tu thu muc Resource
         try {
             background = ImageIO.read(new File("Resources/Background.png"));
-            plane.sprite = ImageIO.read(new File("Resources/PLANE1.png"));
-            plane1.sprite=ImageIO.read(new File("Resources/PLANE2.png"));
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-        this.addMouseMotionListener(this);
-        this.addMouseListener(this);
+        initPlane();
+        //bat su kien di chuyen chuot
+        //this.addMouseListener();
         //doan code de bat su kien bam phim
+        this.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                if(e.getModifiers()==InputEvent.BUTTON1_MASK){
+                    planeMoveByMouse.shot();
+
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+        this.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                planeMoveByMouse.move(e.getX(),e.getY());
+            }
+        });
         this.addKeyListener(new KeyListener() {
             //truoc khi bam
             @Override
@@ -68,67 +97,89 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_A) {
-                    plane.direction = 3;
+                    planeMoveByKey.setDirection(3);
                 } else if(e.getKeyCode() == KeyEvent.VK_D) {
-                    plane.direction = 4;
+                    planeMoveByKey.setDirection(4);
                 } else if(e.getKeyCode() == KeyEvent.VK_W) {
-                    plane.direction = 1;
+                    planeMoveByKey.setDirection(1);
                 } else if(e.getKeyCode() == KeyEvent.VK_S) {
-                    plane.direction = 2;
+                    planeMoveByKey.setDirection(2);
+                } else if(e.getKeyCode() == KeyEvent.VK_SPACE){
+                    planeMoveByKey.shot();
                 }
             }
             //khi nhac phim len
             @Override
             public void keyReleased(KeyEvent e) {
-                //khi thả phím lên thì để direction = 0 cho nó không bay nữa
-                plane.direction = 0;
+                planeMoveByKey.setDirection(0);
             }
         });
     }
+    private void initPlane(){
+
+        planeMoveByKey = new Plane(200,200,3,4);
+        planeMoveByMouse = new Plane(300,300,4,2);
+       // planeEnemy = new PlaneEnemy(200,200,5);
+        vectorPlaneEnemy.add(new PlaneEnemy(200, 200, 1,1));
+        vectorPlaneEnemy.add(new PlaneEnemy(150, 100, 2,1));
+        vectorPlaneEnemy.add(new PlaneEnemy(100, 150, 3,2));
+        vectorPlaneEnemy.add(new PlaneEnemy(250, 120, 4,2));
+        vectorPlaneEnemy.add(new PlaneEnemy(300, 90, 5,2));
+//        planeMoveByKey.setPositionX(300);
+//        planeMoveByKey.setPositionY(400);
+//        planeMoveByKey.setSpeed(4);
+//        //planeImage = ImageIO.read(new File("Resources/PLANE1.png"));
+//        try {
+//            planeMoveByKey.setSprite(ImageIO.read(new File("Resources/PLANE1.png")));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Plane planeMoveByMouse = new Plane();
+
+    }
     //ham ve
     //ve~ moi. thu o day
+    @Override
     public void update(Graphics g){
-        if(image==null){
-            image= createImage(this.getWidth(),this.getHeight());
-             seconds=image.getGraphics();
-
+        if(image == null){
+            image = createImage(this.getWidth(), this.getHeight());
+            seconds= image.getGraphics();
         }
         seconds.setColor(getBackground());
         seconds.fillRect(0,0,getWidth(),getHeight());
         seconds.setColor(getForeground());
         paint(seconds);
         g.drawImage(image,0,0,null);
-
-
     }
     @Override
     public void paint(Graphics g) {
 
         super.paint(g);
 
-        g.drawImage(background,0,0,null);
-        plane.draw(g);
-        plane1.draw(g);
+        g.drawImage(background, 0, 0, null);
 
+        planeMoveByKey.draw(g);
+        planeMoveByMouse.draw(g);
+        for(PlaneEnemy planeEnemy : vectorPlaneEnemy){
+            planeEnemy.draw(g);
+        }
         //g.drawLine(0,0, 100, 100);
-    }
-    // phuong thuc an mouse
-    private void hiddenmouse() {
-        Toolkit g = Toolkit.getDefaultToolkit();
-        Point h = new Point(0,0);
-        BufferedImage hidden = new BufferedImage(1, 1, BufferedImage.TRANSLUCENT);
-        Cursor invisibleCursor = g.createCustomCursor(hidden, h, "InvisibleCursor");
-        setCursor(invisibleCursor);
     }
     //Game Loop
     //Vong Lap game
     @Override
     public void run() {
-        int count = 0;
-        while (true) {
-            plane.move();
+
+        while(true) {
+
+            planeMoveByKey.update();
+            planeMoveByMouse.update();
+            for(PlaneEnemy planeEnemy : vectorPlaneEnemy){
+                planeEnemy.update();
+            }
+
             repaint();
-            System.out.println(count++);
+
 
             try {
                 Thread.sleep(17);
@@ -136,48 +187,5 @@ public class GameWindow extends Frame implements Runnable,MouseListener,MouseMot
                 e.printStackTrace();
             }
         }
-    }
-
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-
-
-    }
-
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        plane1.positionX = e.getX();
-        plane1.positionY = e.getY();
-
-
     }
 }

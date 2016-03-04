@@ -1,15 +1,13 @@
 /**
- * Created by ASUS on 2/27/2016.
- */
-/**
-
+ * Created by Tuan on 2/26/16.
  */
 public class Program {
+
     public static void main(String[] args) {
+
         GameWindow gameWindow = new GameWindow();
         Thread thread = new Thread(gameWindow);
         thread.start();
 
     }
 }
-
