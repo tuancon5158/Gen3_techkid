@@ -35,14 +35,14 @@ public class PlaneEnemy extends PlaneObject{
         {
             case 3:
                 try {
-                    this.sprite = ImageIO.read(new File("Resouces/PLANE3.PNG"));
+                    this.sprite = ImageIO.read(new File("Resources/PLANE3.PNG"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case 2:
                 try {
-                    this.sprite = ImageIO.read(new File("Resouces/PLANE2.PNG"));
+                    this.sprite = ImageIO.read(new File("Resources/PLANE2.PNG"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

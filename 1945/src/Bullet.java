@@ -1,6 +1,5 @@
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -8,7 +7,7 @@ import java.io.IOException;
  * Created by Tuan on 2/26/16.
  */
 public class Bullet extends GameObject{
-
+    //thuoc tinh de public?
     public int speed;
 
 
